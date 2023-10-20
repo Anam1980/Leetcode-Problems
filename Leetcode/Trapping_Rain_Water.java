@@ -5,31 +5,50 @@ Problem Link : https://leetcode.com/problems/trapping-rain-water/
 
 class Solution {
     public int trap(int[] arr) {
+        // TC: O(N), SC: O(1)
         int n = arr.length;
-        int res = 0;
-        int[] lmax = new int[n], rmax = new int[n];
-        
-        // Calculate the maximum height to the left of each bar
-        lmax[0] = arr[0];
-        for (int i = 1; i < n; i++) {
-            lmax[i] = Math.max(lmax[i - 1], arr[i]);
+
+        //Take two pointer at first element at left and last element at right
+            int LB = arr[0];
+            int RB = arr[n - 1];
+
+            //Take two pointer at second index from left and second index from right
+            int l = 1;
+            int r = n - 2;
+
+            //take total water as 0
+            int totalWater = 0;
+
+            //O(N)
+            while (l <= r) {
+                //left ele < right ele
+                if (LB <= RB) {
+                    //finding the bigger level of building at left
+                    if (LB < arr[l]) {
+                        //curr set to bigger one
+                        LB = arr[l];
+                    }
+                    else {
+                        //finally add the diff of curr(big) and next(small) to the total water
+                        // as upto that water is filled--> level of water
+                        totalWater += LB - arr[l];
+                    }
+                    l++;
+                }
+                //left ele > right ele
+                else {
+                    //finding the bigger level of building at right
+                    if (RB < arr[r]) {
+                        RB = arr[r];
+                    } else {
+                        //finally add the diff of curr(big) and prev(small) to the total water amount
+                        totalWater += RB - arr[r];
+                    }
+                    r--;
+                }
+            }
+
+           return totalWater;
         }
-        
-        // Calculate the maximum height to the right of each bar
-        rmax[n - 1] = arr[n - 1];
-        for (int i = n - 2; i >= 0; i--) {
-            rmax[i] = Math.max(arr[i], rmax[i + 1]);
-        }
-        
-        // Calculate the trapped rainwater for each bar
-        for (int i = 0; i < n; i++) {
-            // The amount of trapped water at the current bar is determined
-            // by the minimum of the maximum heights to the left and right
-            // minus the height of the current bar.
-            int minMaxHeight = Math.min(lmax[i], rmax[i]);
-            res += minMaxHeight - arr[i];
-        }
-        
-        return res;
     }
-}
+
